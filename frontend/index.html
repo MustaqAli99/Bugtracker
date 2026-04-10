@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTrack - My Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <h1>DevTrack Issue Tracker</h1>
+        <div id="user-info" class="user-profile"></div>
+    </header>
+
+    <!-- Dashboard -->
+    <main class="dashboard">
+
+        <!-- Role Controls + Title -->
+        <div id="role-controls" class="dashboard-header">
+            <h2 id="dashboard-title">Loading...</h2> <!-- ✅ FIXED -->
+            <button onclick="setupRoleUI()" class="refresh-btn">Refresh Data</button> <!-- ✅ FIXED -->
+        </div>
+
+        <!-- Tickets Container -->
+        <div id="ticket-container" class="ticket-grid"></div>
+        <main class="dashboard">
+        <div class="dashboard-header">
+            <h2 id="dashboard-title">My Assigned Tickets</h2>
+            <div id="role-controls"></div>
+        </div>
+
+        <div id="ticket-container" class="ticket-grid"></div>
+
+        <div class="dashboard-header" style="margin-top: 3rem; border-top: 2px solid #ddd; padding-top: 1rem;">
+            <h2>Solved & Archived</h2>
+        </div>
+        <div id="closed-ticket-container" class="ticket-grid" style="opacity: 0.7;"></div>
+    </main>
+
+    </main>
+
+    <script src="app.js"></script>
+    <div id="bugModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, 0); background:white; padding:2rem; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; width:400px;">
+        <h2>Report New Bug</h2>
+        
+        <select id="bugProject" style="width:100%; margin-bottom:10px; padding:8px;">
+            <option value="">Loading Projects...</option>
+        </select>
+
+        <input type="text" id="bugTitle" placeholder="Bug Title" style="width:100%; margin-bottom:10px; padding:8px;">
+        <textarea id="bugDesc" placeholder="Steps to reproduce..." style="width:100%; height:100px; margin-bottom:10px; padding:8px;"></textarea>
+        <select id="bugPriority" style="width:100%; margin-bottom:15px; padding:8px;">
+            <option value="LOW">Low Priority</option>
+            <option value="HIGH">High Priority</option>
+            <option value="CRITICAL">Critical Priority</option>
+        </select>
+        <button class="action-btn" onclick="submitNewBug()">Submit Bug</button>
+        <button onclick="document.getElementById('bugModal').style.display='none'" style="margin-top:10px; width:100%; padding:8px;">Cancel</button>
+    </div>
+    <div id="projectModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, 0); background:white; padding:2rem; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; width:400px;">
+        <h2>Create New Project</h2>
+        <input type="text" id="projectName" placeholder="Project Name" style="width:100%; margin-bottom:10px; padding:8px;">
+        <textarea id="projectDesc" placeholder="Project Description..." style="width:100%; height:80px; margin-bottom:15px; padding:8px;"></textarea>
+        <button class="action-btn" style="background:#8e44ad;" onclick="submitNewProject()">Save Project</button>
+        <button onclick="document.getElementById('projectModal').style.display='none'" style="margin-top:10px; width:100%; padding:8px;">Cancel</button>
+    </div>
+</body>
+</html>

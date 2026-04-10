@@ -1,0 +1,29 @@
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { margin: 0; background-color: #f4f7f6; color: #333; }
+
+.navbar { background: #2c3e50; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+.navbar h1 { margin: 0; font-size: 1.5rem; }
+
+.dashboard { padding: 2rem; max-width: 1200px; margin: auto; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.refresh-btn { padding: 0.5rem 1rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+.ticket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+.ticket-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #bdc3c7; }
+.ticket-card h3 { margin-top: 0; }
+.ticket-meta { font-size: 0.85rem; color: #7f8c8d; margin-bottom: 1rem; }
+
+/* Badges */
+.badge { padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold; color: white; display: inline-block; margin-bottom: 0.5rem; }
+.priority-CRITICAL { background: #e74c3c; }
+.priority-HIGH { background: #e67e22; }
+.priority-LOW { background: #2ecc71; }
+
+.status-OPEN { background: #3498db; }
+.status-IN_PROGRESS { background: #f1c40f; color: black; }
+.status-TESTING { background: #9b59b6; }
+
+/* Action Buttons */
+.action-btn { margin-top: 1rem; padding: 0.5rem; width: 100%; border: none; background: #2ecc71; color: white; cursor: pointer; border-radius: 4px; font-weight: bold;}
+.action-btn:hover { background: #27ae60; }

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTrack - Login</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .form-group { margin-bottom: 1rem; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>System Login</h2>
+
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Email (e.g., dev@test.com)" required>
+        </div>
+
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password (e.g., pass)" required>
+        </div>
+
+        <!-- ✅ FIX: prevent accidental reload -->
+        <button class="action-btn" id="login-btn">Log In</button>
+
+        <p id="error-msg" class="error">Invalid credentials.</p>
+
+        <hr style="margin-top:20px;">
+
+        <small>
+            <strong>Test Accounts:</strong><br>
+            Admin: admin@test.com / pass<br>
+            QA: qa@test.com / pass<br>
+            Dev: dev@test.com / pass
+        </small>
+    </div>
+
+    <script>
+        document.getElementById("login-btn").addEventListener("click", attemptLogin);
+
+        async function attemptLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            // ✅ FIX: basic validation
+            if (!email || !password) {
+                errorMsg.innerText = "Please enter email and password.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+
+                    // ✅ Save user session
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+
+                    // ✅ Redirect
+                    window.location.href = 'index.html';
+                } else {
+                    errorMsg.innerText = "Invalid credentials.";
+                    errorMsg.style.display = 'block';
+                }
+
+            } catch (error) {
+                errorMsg.innerText = "Server not reachable.";
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+</html>
