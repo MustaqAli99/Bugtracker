@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.tracker.bugtracker.entity.Comment;
 import com.tracker.bugtracker.entity.Project;
 import com.tracker.bugtracker.entity.User;
+import com.tracker.bugtracker.repository.CommentRepository;
 import com.tracker.bugtracker.repository.ProjectRepository;
 import com.tracker.bugtracker.enums.Priority;
 import com.tracker.bugtracker.enums.TicketType;
@@ -29,6 +32,9 @@ public class TicketController {
     
     @Autowired
     private TicketRepository ticketRepository;
+    
+    @Autowired
+    private CommentRepository commentRepository;
 
     /**
      * Endpoint 1: Get all tickets assigned to a specific developer.
@@ -144,5 +150,49 @@ public class TicketController {
         dto.setUpdatedAt(ticket.getUpdatedAt());
         
         return dto;
+    }
+    
+    /**
+     * Endpoint 5: Add a comment to a ticket
+     */
+    @PostMapping("/{ticketId}/comments")
+    public ResponseEntity<?> addComment(
+            @PathVariable Long ticketId, 
+            @RequestBody CreateCommentRequest request) {
+        
+        try {
+            Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
+            User author = userRepository.findById(request.getAuthorId()).orElseThrow();
+
+            Comment comment = new Comment();
+            comment.setText(request.getText());
+            comment.setTicket(ticket);
+            comment.setAuthor(author);
+            
+            commentRepository.save(comment);
+            return ResponseEntity.ok("Comment added!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error adding comment.");
+        }
+    }
+
+    /**
+     * Endpoint 6: Get all comments for a specific ticket
+     */
+    @GetMapping("/{ticketId}/comments")
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long ticketId) {
+        List<Comment> comments = commentRepository.findByTicketIdOrderByCreatedAtAsc(ticketId);
+        
+        List<CommentDTO> response = comments.stream().map(c -> {
+            CommentDTO dto = new CommentDTO();
+            dto.setId(c.getId());
+            dto.setText(c.getText());
+            dto.setAuthorName(c.getAuthor().getUsername());
+            dto.setAuthorRole(c.getAuthor().getRole().name());
+            dto.setCreatedAt(c.getCreatedAt());
+            return dto;
+        }).collect(Collectors.toList());
+        
+        return ResponseEntity.ok(response);
     }
 }

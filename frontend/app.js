@@ -137,6 +137,9 @@ function createTicketCard(ticket) {
         actionButtonHtml = `<p style="color: green; font-weight: bold;">✔ Ticket Closed</p>`;
     }
 
+    // ✅ ADD THIS LINE RIGHT HERE
+    actionButtonHtml += `<button class="action-btn" style="background:#34495e; margin-top:10px;" onclick="openDetailsModal(${ticket.id}, '${ticket.title.replace(/'/g, "\\'")}', '${ticket.description.replace(/'/g, "\\'")}')">View Details & Comments</button>`;
+
     card.innerHTML = `
         <span class="badge priority-${ticket.priority}">${ticket.priority}</span>
         <span class="badge status-${ticket.status}">${ticket.status.replace('_', ' ')}</span>
@@ -147,7 +150,6 @@ function createTicketCard(ticket) {
     `;
     return card;
 }
-
 // Update Status
 async function updateStatus(ticketId, newStatus) {
     try {
@@ -277,6 +279,101 @@ async function submitNewProject() {
         } else {
             const err = await response.text();
             alert("Failed to create project: " + err);
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+        alert("Failed to connect to the server.");
+    }
+}
+
+// --- COMMENTS SYSTEM FUNCTIONS ---
+
+let activeTicketIdForComments = null; // Keeps track of which ticket we are looking at
+
+// 1. Open the Modal & Fetch Comments
+async function openDetailsModal(ticketId, title, description) {
+    activeTicketIdForComments = ticketId;
+    
+    // Set the text in the UI
+    document.getElementById('detailsTitle').innerText = title;
+    document.getElementById('detailsDesc').innerText = description;
+    document.getElementById('detailsModal').style.display = 'block';
+    
+    // Clear the input box and show loading text
+    document.getElementById('newCommentText').value = '';
+    document.getElementById('commentsList').innerHTML = '<p>Loading...</p>';
+
+    fetchComments(ticketId);
+}
+
+// 2. Fetch comments from the Spring Boot API
+async function fetchComments(ticketId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/${ticketId}/comments`);
+        if (!response.ok) throw new Error("Failed to fetch comments");
+        
+        const comments = await response.json();
+        renderComments(comments);
+    } catch (error) {
+        console.error(error);
+        document.getElementById('commentsList').innerHTML = '<p style="color:red;">Error loading comments.</p>';
+    }
+}
+
+// 3. Draw the chat bubbles in the HTML
+function renderComments(comments) {
+    const container = document.getElementById('commentsList');
+    container.innerHTML = ''; // Clear loading text
+
+    if (comments.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">No comments yet. Be the first to start the discussion!</p>';
+        return;
+    }
+
+    comments.forEach(comment => {
+        // Format the date nicely (e.g., "4/10/2026, 2:30 PM")
+        const dateString = new Date(comment.createdAt).toLocaleString();
+        
+        container.innerHTML += `
+            <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <div style="font-size: 0.85rem; color: #777; margin-bottom: 5px;">
+                    <strong style="color: #2c3e50;">${comment.authorName} (${comment.authorRole})</strong> • ${dateString}
+                </div>
+                <div style="font-size: 0.95rem;">${comment.text}</div>
+            </div>
+        `;
+    });
+
+    // Auto-scroll to the bottom of the chat to see the newest message
+    container.scrollTop = container.scrollHeight;
+}
+
+// 4. Send a new comment to the server
+async function submitComment() {
+    const text = document.getElementById('newCommentText').value;
+
+    if (!text.trim()) {
+        alert("Cannot post an empty comment!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/${activeTicketIdForComments}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: text,
+                authorId: currentUser.id // We use the ID of whoever is currently logged in!
+            })
+        });
+
+        if (response.ok) {
+            // Clear the text box
+            document.getElementById('newCommentText').value = '';
+            // Immediately refresh the chat window to show the new message
+            fetchComments(activeTicketIdForComments);
+        } else {
+            alert("Failed to post comment.");
         }
     } catch (error) {
         console.error("Network error:", error);

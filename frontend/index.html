@@ -66,5 +66,24 @@
         <button class="action-btn" style="background:#8e44ad;" onclick="submitNewProject()">Save Project</button>
         <button onclick="document.getElementById('projectModal').style.display='none'" style="margin-top:10px; width:100%; padding:8px;">Cancel</button>
     </div>
+
+    <div id="detailsModal" style="display:none; position:fixed; top:10%; left:50%; transform:translate(-50%, 0); background:white; padding:2rem; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.5); z-index:100; width:500px; max-height: 85vh; overflow-y: auto;">
+        
+        <h2 id="detailsTitle" style="margin-top:0;">Ticket Title</h2>
+        <p id="detailsDesc" style="color: #555; background: #f4f7f6; padding: 10px; border-radius: 4px;"></p>
+        
+        <hr style="margin: 20px 0;">
+        
+        <h3 style="margin-bottom: 10px;">Discussion</h3>
+        
+        <div id="commentsList" style="max-height: 250px; overflow-y: auto; background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px;">
+            <p style="color: #999; font-style: italic;">Loading comments...</p>
+        </div>
+
+        <textarea id="newCommentText" placeholder="Type your update here..." style="width:100%; height:70px; margin-bottom:10px; padding:10px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit;"></textarea>
+        
+        <button class="action-btn" style="background:#27ae60;" onclick="submitComment()">Post Comment</button>
+        <button onclick="document.getElementById('detailsModal').style.display='none'" style="margin-top:10px; width:100%; padding:8px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 4px;">Close Viewer</button>
+    </div>
 </body>
 </html>
