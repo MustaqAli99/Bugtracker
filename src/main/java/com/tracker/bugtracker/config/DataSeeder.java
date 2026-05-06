@@ -21,7 +21,7 @@ public class DataSeeder {
             if (userRepository.count() == 0) {
                 User admin = new User(null, "admin", "admin@test.com", "pass", Role.ADMIN, null);
                 User qa = new User(null, "qa_jenny", "qa@test.com", "pass", Role.QA, null);
-                User dev = new User(null, "DevUser", "dev@test.com", "pass", Role.DEVELOPER, null); // ID will be 3
+                User dev = new User(null, "DevUser", "dev@test.com", "pass", Role.DEVELOPER, null);
 
                 userRepository.save(admin);
                 userRepository.save(qa);
